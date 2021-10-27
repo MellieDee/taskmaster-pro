@@ -158,11 +158,6 @@ $(".list-group").on("blur", "input[type='text']", function () {
 });
 
 
-
-
-
-
-
 // modal was triggered
 $("#task-form-modal").on("show.bs.modal", function () {
   // clear values
@@ -175,7 +170,7 @@ $("#task-form-modal").on("shown.bs.modal", function () {
   $("#modalTaskDescription").trigger("focus");
 });
 
-// save button in modal was clicked
+// "save" button in modal was clicked
 $("#task-form-modal .btn-primary").click(function () {
   // get form values
   var taskText = $("#modalTaskDescription").val();
