@@ -75,9 +75,9 @@ $(".list-group").on("click", "span", function () {
 
   //create new date input area
   var dateInput = $("<input>")
-  .attr("type", "text")
-  .addClass("form-control")
-  .val(date);
+    .attr("type", "text")
+    .addClass("form-control")
+    .val(date);
 
   //swap out elements
   $(this).replaceWith(dateInput);
@@ -128,19 +128,19 @@ $(".list-group").on("blur", "textarea", function () {
 $(".list-group").on("blur", "input[type='text']", function () {
   //get current text
   var date = $(this)
-  .val()
-  .trim();
+    .val()
+    .trim();
 
   //get its parent's ul's id attributes
   var status = $(this)
-  .closest(".list-group")
-  .attr("id")
-  .replace("list-", "");
+    .closest(".list-group")
+    .attr("id")
+    .replace("list-", "");
 
   //get tasks position in the list of other li elements
   var index = $(this)
-  .closest(".list-group-item")
-  .index();
+    .closest(".list-group-item")
+    .index();
 
   //update task in array and re-save to localStorage
   tasks[status][index].date = date;
@@ -149,8 +149,8 @@ $(".list-group").on("blur", "input[type='text']", function () {
   //convert date input back to date display
   //1) Recreate span 'date' ele with bootstrap classes
   var taskSpan = $("<span>")
-  .addClass("badge badge-primary badge-pill")
-  .text(date);
+    .addClass("badge badge-primary badge-pill")
+    .text(date);
 
   // 2) Replace temporary input ie put back span El
   $(this).replaceWith(taskSpan);
@@ -199,6 +199,84 @@ $("#remove-tasks").on("click", function () {
     $("#list-" + key).empty();
   }
   saveTasks();
+});
+
+// *** Framework to make cards sortable  
+$(".card .list-group").sortable({
+  connectWith: $(".card .list-group"),
+  scroll: false,
+  tolerance: "pointer",
+  helper: "clone",
+  activate: function (event) {
+    console.log("activate", this);
+  },
+
+  deactivate: function (event) {
+    console.log("deactivate", this);
+  },
+
+
+  out: function (event) {
+    console.log("out", event.target);
+  },
+
+  over: function (event) {
+    console.log("over", this);
+  },
+
+  update: function (event) {
+    //array to store task data in (task data is name ie text and date)
+    var tempArr = [];
+
+    //loop over current set of children in sortable list
+    // Because the nested $(this) refers to the task <li> element, you can use additional jQuery methods to strip out the task's description and due date. jQuery's find() method is perfect //for traversing through child DOM elements.
+
+    $(this).children().each(function () {
+      var text = $(this)
+        .find("p")
+        .text()
+        .trim();
+
+      var date = $(this)
+        .find("span")
+        .text()
+        .trim();
+
+      //add task data (aka task name/text and date) to the temporary array as an OBJ
+      tempArr.push({
+        text: text,
+        date: date
+
+      });
+
+    });
+    //trim down lists ID to match object property
+    var arrName = $(this)
+      .attr("id")
+      .replace("list-", "");
+
+    //update array on tasks object and Save
+    tasks[arrName] = tempArr;
+    saveTasks();
+
+  }
+});
+
+$("#trash").droppable({
+  accept: ".card .list-group-item",
+  tolerance: "touch",
+  drop: function(event, ui) {
+    ui.draggable.remove()
+
+    console.log("drop");
+  },
+  over: function(event, ui) {
+    console.log("over");
+  },
+
+  out: function(event ,ui) {
+    console.log("out");
+  }
 });
 
 // load tasks for the first time
